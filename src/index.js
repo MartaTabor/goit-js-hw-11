@@ -18,34 +18,37 @@ const fetchPhotos = async () => {
   const searchResults = await axios.get(
     `https://pixabay.com/api/?${searchParams}`
   );
-  return searchResults.data;
+  const searchData = await searchResults.data;
+  return searchData;
 };
 
 fetchPhotos()
-  .then(searchResults => console.log(searchResults.data))
+  .then(searchData => console.log(searchData))
   .catch(error => console.log(error));
 
-// function renderPhotos(searchResults) {
-//   const markup = searchResults
-//     .map(
-//       hit => `<div class="photo-card">
-//   <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes: ${hit.likes}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views: ${hit.views}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments: ${hit.comments}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads: ${hit.downloads}</b>
-//     </p>
-//   </div>
-// </div>`
-//     )
-//     .join('');
-//   gallery.innerHTML = markup;
-// }
+function renderPhotos(searchData) {
+  const markup = searchData
+    .map(
+      hit => `<div class="photo-card">
+  <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes: ${hit.likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views: ${hit.views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments: ${hit.comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads: ${hit.downloads}</b>
+    </p>
+  </div>
+</div>`
+    )
+    .join('');
+  gallery.innerHTML = markup;
+}
+
+renderPhotos();

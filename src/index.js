@@ -23,13 +23,11 @@ const fetchPhotos = async () => {
 };
 
 fetchPhotos()
-  .then(searchData => console.log(searchData))
-  .catch(error => console.log(error));
-
-function renderPhotos(searchData) {
-  const markup = searchData
-    .map(
-      hit => `<div class="photo-card">
+  // .then(searchData => console.log(searchData))
+  .then(({ hits }) => {
+    const markup = hits
+      .map(
+        hit => `<div class="photo-card">
   <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
@@ -46,9 +44,35 @@ function renderPhotos(searchData) {
     </p>
   </div>
 </div>`
-    )
-    .join('');
-  gallery.innerHTML = markup;
-}
+      )
+      .join('');
+    gallery.innerHTML = markup;
+  })
+  .catch(error => console.log(error));
 
-renderPhotos();
+// function renderPhotos(searchData) {
+//   const markup = searchData
+//     .map(
+//       hit => `<div class="photo-card">
+//   <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
+//   <div class="info">
+//     <p class="info-item">
+//       <b>Likes: ${hit.likes}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Views: ${hit.views}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Comments: ${hit.comments}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Downloads: ${hit.downloads}</b>
+//     </p>
+//   </div>
+// </div>`
+//     )
+//     .join('');
+//   gallery.innerHTML = markup;
+// }
+
+// renderPhotos();

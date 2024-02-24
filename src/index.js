@@ -19,7 +19,7 @@ const searchParams = new URLSearchParams({
   per_page: 40,
 });
 
-const fetchPhotos = async (query, page) => {
+const fetchPhotos = async () => {
   searchParams.set('q', searchQuery.elements[0].value.split(' ').join('+'));
   const searchResults = await axios.get(
     `https://pixabay.com/api/?${searchParams}`
@@ -71,15 +71,16 @@ function renderPhotos(data, append = false) {
   }
 }
 
-searchBtn.addEventListener('click', async event => {
+searchQuery.addEventListener('submit', async event => {
   event.preventDefault();
-  if (searchQuery === currentQuery) {
-    page = 1;
-  } else {
-    currentQuery = searchQuery;
-  }
+  // if (searchQuery === currentQuery) {
+  //   page = 1;
+  // } else {
+  //   currentQuery = searchQuery;
+  // }
 
   try {
+    page = 1;
     const photos = await fetchPhotos(searchQuery, page);
     renderPhotos(photos);
 
@@ -96,7 +97,7 @@ searchBtn.addEventListener('click', async event => {
 });
 
 fetchBtn.addEventListener('click', async () => {
-  page++;
+  searchParams.set('page', ++page);
   try {
     const photos = await fetchPhotos(currentQuery, page);
     renderPhotos(photos, true);

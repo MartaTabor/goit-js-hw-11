@@ -47,6 +47,14 @@ button:hover {
   background-image: linear-gradient(#b384c9, #391f5b 50%);
 }
 
+h1 {
+  margin: 0;
+  text-align: center;
+  text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.34);
+  font-size: 50px;
+  color: #ffffff;
+}
+
 .hidden {
   display: none;
 }
@@ -61,6 +69,7 @@ button:hover {
   -moz-box-shadow: 11px 11px 17px -6px rgba(0, 0, 0, 0.75);
   box-shadow: 11px 11px 17px -6px rgba(0, 0, 0, 0.75);
   margin-bottom: 50px;
+  margin-top: 25px;
 }
 
 .search-form {

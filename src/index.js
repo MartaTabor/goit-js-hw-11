@@ -3,17 +3,11 @@ import Notiflix from 'notiflix';
 
 const searchQuery = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-const searchBtn = document.querySelector('button');
+const searchBtn = document.querySelector('button[type="submit"');
+const fetchBtn = document.querySelector('button[type="button"');
 
-searchBtn.addEventListener('click', async event => {
-  event.preventDefault();
-  try {
-    const photos = await fetchPhotos();
-    renderPhotos(photos);
-  } catch (error) {
-    console.log(error);
-  }
-});
+let page = 1;
+let currentQuery = '';
 
 const searchParams = new URLSearchParams({
   key: '42459291-7f50c47c6b19e5b61fce58d70',
@@ -21,11 +15,11 @@ const searchParams = new URLSearchParams({
   image_type: 'photo',
   orientation: 'horizontal',
   safesearch: 'true',
-  page: 1,
+  page: page,
   per_page: 40,
 });
 
-const fetchPhotos = async () => {
+const fetchPhotos = async (query, page) => {
   searchParams.set('q', searchQuery.elements[0].value.split(' ').join('+'));
   const searchResults = await axios.get(
     `https://pixabay.com/api/?${searchParams}`
@@ -33,38 +27,12 @@ const fetchPhotos = async () => {
   return searchResults.data;
 };
 
-// fetchPhotos()
-//   .then(({ hits }) => {
-//     const markup = hits
-//       .map(
-//         hit => `<div class="photo-card">
-//   <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes: ${hit.likes}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views: ${hit.views}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments: ${hit.comments}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads: ${hit.downloads}</b>
-//     </p>
-//   </div>
-// </div>`
-//       )
-//       .join('');
-//     gallery.innerHTML = markup;
-//   })
-//   .catch(error => console.log(error));
-
-function renderPhotos(data) {
+function renderPhotos(data, append = false) {
   if (data.hits.length <= 0) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    gallery.innerHTML = '';
   } else {
     const markup = data.hits
       .map(
@@ -94,6 +62,48 @@ function renderPhotos(data) {
 </div>`
       )
       .join('');
-    gallery.innerHTML = markup;
+
+    if (append) {
+      gallery.innerHTML += markup;
+    } else {
+      gallery.innerHTML = markup;
+    }
   }
 }
+
+searchBtn.addEventListener('click', async event => {
+  event.preventDefault();
+  if (searchQuery === currentQuery) {
+    page = 1;
+  } else {
+    currentQuery = searchQuery;
+  }
+
+  try {
+    const photos = await fetchPhotos(searchQuery, page);
+    renderPhotos(photos);
+
+    if (photos.hits.length === 0) {
+      fetchBtn.classList.add('hidden');
+    } else {
+      fetchBtn.classList.remove('hidden');
+      const dataHits = photos.totalHits;
+      Notiflix.Notify.success(`Hooray! We found ${dataHits} images.`);
+    }
+  } catch (error) {
+    Notiflix.Notify.failure(`ERROR: ${error}`);
+  }
+});
+
+fetchBtn.addEventListener('click', async () => {
+  page++;
+  try {
+    const photos = await fetchPhotos(currentQuery, page);
+    renderPhotos(photos, true);
+    if (photos.hits.length === 0) {
+      fetchBtn.classList.add('hidden');
+    }
+  } catch (error) {
+    Notiflix.Notify.failure(`ERROR: ${error}`);
+  }
+});

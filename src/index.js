@@ -1,13 +1,15 @@
 import axios from 'axios';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchQuery = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-const searchBtn = document.querySelector('button[type="submit"');
 const fetchBtn = document.querySelector('button[type="button"');
 
 let page = 1;
 let currentQuery = '';
+let totalHits = 0;
 
 const searchParams = new URLSearchParams({
   key: '42459291-7f50c47c6b19e5b61fce58d70',
@@ -38,13 +40,14 @@ function renderPhotos(data, append = false) {
       .map(
         ({
           webformatURL,
+          largeImageURL,
           tags,
           likes,
           views,
           comments,
           downloads,
-        }) => `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+        }) => `<div class="photo-card"><a class="gallery__item" href="${largeImageURL}">
+  <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes: ${likes}</b>
@@ -71,17 +74,17 @@ function renderPhotos(data, append = false) {
   }
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+  const lightbox = new SimpleLightbox('.gallery a');
+});
+
 searchQuery.addEventListener('submit', async event => {
   event.preventDefault();
-  // if (searchQuery === currentQuery) {
-  //   page = 1;
-  // } else {
-  //   currentQuery = searchQuery;
-  // }
 
   try {
     page = 1;
     const photos = await fetchPhotos(searchQuery, page);
+    totalHits = photos.totalHits;
     renderPhotos(photos);
 
     if (photos.hits.length === 0) {
@@ -101,10 +104,31 @@ fetchBtn.addEventListener('click', async () => {
   try {
     const photos = await fetchPhotos(currentQuery, page);
     renderPhotos(photos, true);
+    loadMorePhotos(photos.hits.length);
     if (photos.hits.length === 0) {
       fetchBtn.classList.add('hidden');
     }
   } catch (error) {
     Notiflix.Notify.failure(`ERROR: ${error}`);
   }
+});
+
+function loadMorePhotos() {
+  if (page * 40 >= totalHits) {
+    fetchBtn.classList.add('hidden');
+    Notiflix.Notify.failure(
+      "We're sorry, but you've reached the end of search results."
+    );
+  } else {
+    fetchBtn.classList.remove('hidden');
+  }
+}
+
+const { height: cardHeight } = document
+  .querySelector('.gallery')
+  .firstElementChild.getBoundingClientRect();
+
+window.scrollBy({
+  top: cardHeight * 2,
+  behavior: 'smooth',
 });

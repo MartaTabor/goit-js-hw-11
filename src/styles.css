@@ -77,6 +77,7 @@ button:hover {
   -webkit-box-shadow: inset -4px 3px 17px -6px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: inset -4px 3px 17px -6px rgba(0, 0, 0, 0.75);
   box-shadow: inset -4px 3px 17px -6px rgba(0, 0, 0, 0.75);
+  padding: 15px;
 }
 
 .gallery {
@@ -95,6 +96,7 @@ button:hover {
   -webkit-box-shadow: 11px 11px 17px -6px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 11px 11px 17px -6px rgba(0, 0, 0, 0.75);
   box-shadow: 11px 11px 17px -6px rgba(0, 0, 0, 0.75);
+  background-color: rgb(251, 251, 251, 0.5);
 }
 
 .gallery__item {
@@ -110,7 +112,6 @@ button:hover {
 }
 
 .info {
-  background-color: rgb(251, 251, 251, 0.5);
   display: flex;
   gap: 5px;
   padding: 15px;

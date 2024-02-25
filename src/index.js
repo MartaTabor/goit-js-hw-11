@@ -80,6 +80,12 @@ function renderPhotos(data, append = false) {
 searchQuery.addEventListener('submit', async event => {
   event.preventDefault();
 
+  const searchPhrase = searchQuery.elements[0].value.trim();
+  if (searchPhrase === '') {
+    Notiflix.Notify.warning('Please enter a search phrase!');
+    return;
+  }
+
   try {
     page = 1;
     const photos = await fetchPhotos(searchQuery, page);

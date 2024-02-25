@@ -10,6 +10,7 @@ const fetchBtn = document.querySelector('button[type="button"');
 let page = 1;
 let currentQuery = '';
 let totalHits = 0;
+let lightbox;
 
 const searchParams = new URLSearchParams({
   key: '42459291-7f50c47c6b19e5b61fce58d70',
@@ -71,12 +72,10 @@ function renderPhotos(data, append = false) {
     } else {
       gallery.innerHTML = markup;
     }
+
+    lightbox = new SimpleLightbox('.gallery a');
   }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-  const lightbox = new SimpleLightbox('.gallery a');
-});
 
 searchQuery.addEventListener('submit', async event => {
   event.preventDefault();

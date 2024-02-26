@@ -24,6 +24,7 @@ const searchParams = new URLSearchParams({
 
 const fetchPhotos = async () => {
   searchParams.set('q', searchQuery.elements[0].value.split(' ').join('+'));
+  searchParams.set('page', page);
   const searchResults = await axios.get(
     `https://pixabay.com/api/?${searchParams}`
   );
@@ -93,16 +94,22 @@ searchQuery.addEventListener('submit', async event => {
   if (searchPhrase === '') {
     Notiflix.Notify.warning('Please enter a search phrase!');
     return;
+  } else if (searchPhrase !== currentQuery) {
+    currentQuery = searchPhrase;
+    page = 1;
   }
 
   try {
-    page = 1;
     const photos = await fetchPhotos(searchQuery, page);
     totalHits = photos.totalHits;
     renderPhotos(photos);
 
     if (photos.hits.length === 0) {
       fetchBtn.classList.add('hidden');
+    } else if (photos.hits.length < 40) {
+      fetchBtn.classList.add('hidden');
+      const dataHits = photos.totalHits;
+      Notiflix.Notify.success(`Hooray! We found ${dataHits} images.`);
     } else {
       fetchBtn.classList.remove('hidden');
       const dataHits = photos.totalHits;
@@ -114,9 +121,9 @@ searchQuery.addEventListener('submit', async event => {
 });
 
 fetchBtn.addEventListener('click', async () => {
-  searchParams.set('page', ++page);
+  ++page;
   try {
-    const photos = await fetchPhotos(currentQuery, page);
+    const photos = await fetchPhotos();
     renderPhotos(photos, true);
     loadMorePhotos(photos.hits.length);
     if (photos.hits.length === 0) {
